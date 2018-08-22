@@ -1,6 +1,6 @@
 {
-  "name": "@kilt/parser",
-  "version": "0.1.1",
+  "name": "@trisquel/parser",
+  "version": "0.1.0",
   "description": "HTML parser",
   "main": "parser.js",
   "scripts": {
