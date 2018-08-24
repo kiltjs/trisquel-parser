@@ -1,27 +1,28 @@
 
-# @trisquel/parser
+# @triskel/parser
 
 Compact, reliable and customizable HTML minifier.
 
 [![ᴋɪʟᴛ ᴊs](https://jesus.germade.es/assets/images/badge-kiltjs.svg)](https://github.com/kiltjs)
-[![npm](https://img.shields.io/npm/v/@trisquel/parser.svg)](https://www.npmjs.com/package/@trisquel/parser)
-[![Build Status](https://travis-ci.org/kiltjs/trisquel-parser.svg?branch=master)](https://travis-ci.org/kiltjs/trisquel-parser)
+[![npm](https://img.shields.io/npm/v/@triskel/parser.svg)](https://www.npmjs.com/package/@triskel/parser)
+[![Build Status](https://travis-ci.org/triskeljs/parser.svg?branch=master)](https://travis-ci.org/triskeljs/parser)
+[![dependencies Status](https://david-dm.org/triskeljs/parser/status.svg)](https://david-dm.org/triskeljs/parser)
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 
 ### Installation
 
 ``` sh
-npm i -D @trisquel/parser
+npm i -D @triskel/parser
 
-# npm install --save-dev @trisquel/parser
+# npm install --save-dev @triskel/parser
 ```
 
 ### Usage
 
 ``` js
 
-var parseHTML = require('@trisquel/parser');
+var parseHTML = require('@triskel/parser');
 
 parseHTML(`
 <body class="mediawiki ltr sitedir-ltr mw-hide-empty-elt ns-4 ns-subject page-Wikipedia_Portada rootpage-Wikipedia_Portada skin-vector action-view">    <div id="mw-page-base" class="noprint"></div>

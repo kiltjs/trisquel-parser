@@ -1,6 +1,6 @@
 {
-  "name": "@trisquel/parser",
-  "version": "0.1.2",
+  "name": "@triskel/parser",
+  "version": "1.0.0",
   "description": "HTML parser",
   "main": "parser.js",
   "scripts": {
@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/kiltjs/trisquel-parser.git"
+    "url": "git+ssh://git@github.com/triskeljs/parser.git"
   },
   "keywords": [
     "html",
@@ -17,9 +17,9 @@
   "author": "Jesús Germade <jesus@germade.es>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/kiltjs/trisquel-parser/issues"
+    "url": "https://github.com/triskeljs/parser/issues"
   },
-  "homepage": "https://github.com/kiltjs/trisquel-parser#readme",
+  "homepage": "https://github.com/triskeljs/parser#readme",
   "devDependencies": {
     "eslint": "5.0.1",
     "mocha": "5.2.0"

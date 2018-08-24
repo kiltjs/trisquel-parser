@@ -1,9 +1,7 @@
 
 function _parseTag (tag_str, options) {
   var tag = { attrs: {}, _: [], unclosed: true };
-  // var tag = { _: [] };
-      // tag = Object.create(tag_proto);
-
+  
   return tag_str
     .replace(/^<|>$/g, '')
     .replace(/ *\/$/, function () {
@@ -25,40 +23,30 @@ function _parseTag (tag_str, options) {
       if( attribute === 'style' ) value = value.replace(/([:;])\s+/g, '$1');
       if( options.compress_attibutes !== false ) value = value.replace(/ *\n */g, '').trim();
       tag.attrs[attribute] = value;
-      // tag[attribute.trim()] = value;
       return '';
     })
     .split(/ +/)
     .reduce(function (tag, empty_attr) {
       if( !empty_attr ) return tag;
       tag.attrs[empty_attr.trim()] = '';
-      // tag[empty_attr.trim()] = '';
       return tag;
     }, tag)
   ;
 }
 
 function _trimText (text) {
-  // return text.replace(/^ *\n+ *| *\n+ *$/g, '');
   return text.replace(/ *\n+ */g, '');
 }
 
 function _parseHTML (html, options) {
   options = options || {};
 
-  // removing comments
-  // if( options.remove_comments !== false ) html = html.replace(/<!--([\s\S]+?)-->/g, '');
-
   var contents = html.split(/<[^>]+?>/g);
-  // var tags = html.match(/<([^>]+?)>/g);
   var nodes = options.nodes || [],
       node_opened = options.node_opened || { $: '__root__', _: nodes };
 
   (html.match(/<([^>]+?)>/g) ||[]).map(function (tag, i) {
 
-    // if( /^\s+$/.test(contents[i]) ) contents[i] = '';
-
-    // if( i && contents[i] && !/^\s+$/.test(contents[i]) ) node_opened._.push({
     if( /\S/.test(contents[i]) ) node_opened._.push({
       text: _trimText(contents[i]),
     });
@@ -102,8 +90,6 @@ var RE_full_content = new RegExp( '<!--|-->|' + full_content_tags.map(function (
   return '<' + tag_name + '[^>]*>|<\\/' + tag_name + '>';
 }).join('|'), 'g');
 
-// var RE_full_content = new RegExp('<(' + full_content_tags.join('|') + ')[^>]*>|<\\/(' + full_content_tags.join('|') + ')>', 'g');
-
 function _cleanNodes (nodes) {
   nodes.forEach(function (tag) {
     // avoiding circular structure
@@ -125,8 +111,6 @@ function _cleanNodes (nodes) {
   return nodes;
 }
 
-// @TODO: parse comments first of all
-
 function parseHTML (html, options) {
   var tags = html.match(RE_full_content) ||[],
       contents = html.split(RE_full_content),
@@ -145,13 +129,6 @@ function parseHTML (html, options) {
       remove_comments: options.remove_comments,
       compress_attibutes: options.compress_attibutes
     });
-
-    // else (function (parse_result) {
-    //   last_parse = parse_result;
-    // })( _parseHTML(contents[i], {
-    //   nodes: nodes,
-    //   node_opened: last_parse.node_opened,
-    // }) );
 
     if( tag_opened ) {
       if( tag_opened.match_closer.test(tag) ) {
@@ -173,26 +150,6 @@ function parseHTML (html, options) {
       (last_parse.node_opened ? last_parse.node_opened._ : nodes).push(tag_opened);
     }
 
-    // if( tag === '<!--' ) tag = { comments: true };
-    // else if( tag === '-->' ) tag = { comments: true, closer: true };
-    // else tag = _parseTag(tag, options);
-    //
-    // if( tag.closer ) {
-    //   if( !tag_opened || tag_opened.$ !== tag.$ ) throw new Error('tag closer \'' + tag.$ + '\' for \'' + (tag_opened ? tag_opened.$ : '!tag_opened') + '\'' );
-    //   delete tag_opened.unclosed;
-    //   tag_opened = null;
-    // } else {
-    //   tag_opened = tag;
-    //   (last_parse.node_opened ? last_parse.node_opened._ : nodes).push(tag);
-    //
-    //   // if( last_parse.node_opened ) {
-    //   //   last_parse.node_opened._ = last_parse.node_opened._ || [];
-    //   //   last_parse.node_opened._.push(tag);
-    //   // } else {
-    //   //   nodes.push(tag);
-    //   // }
-    // }
-
   });
 
   last_parse = _parseHTML(contents[contents.length - 1], {
@@ -200,7 +157,6 @@ function parseHTML (html, options) {
     node_opened: last_parse.node_opened,
   });
 
-  // if( !options.ignore_unclosed && last_parse.node_opened && last_parse.node_opened.$ !== '__root__' && !last_parse.node_opened.warn ) {
   if( !options.ignore_unclosed && last_parse.node_opened && last_parse.node_opened.unclosed && !last_parse.node_opened.warn ) {
     throw new Error('tab unclosed \'' + last_parse.node_opened.$ + '\'');
   }
