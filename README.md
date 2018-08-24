@@ -4,7 +4,7 @@
 Compact, reliable and customizable HTML minifier.
 
 [![ᴋɪʟᴛ ᴊs](https://jesus.germade.es/assets/images/badge-kiltjs.svg)](https://github.com/kiltjs)
-[![npm](https://img.shields.io/npm/v/@trisquel/parser.svg?maxAge=2592000)](https://www.npmjs.com/package/@trisquel/parser)
+[![npm](https://img.shields.io/npm/v/@trisquel/parser.svg)](https://www.npmjs.com/package/@trisquel/parser)
 [![Build Status](https://travis-ci.org/kiltjs/trisquel-parser.svg?branch=master)](https://travis-ci.org/kiltjs/trisquel-parser)
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
