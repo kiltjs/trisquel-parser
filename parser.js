@@ -1,8 +1,8 @@
 
 function _parseTag (tag_str, options) {
   var tag = { attrs: {}, _: [], unclosed: true };
-  
-  return tag_str
+
+  tag_str
     .replace(/^<|>$/g, '')
     .replace(/ *\/$/, function () {
       tag.self_closed = true;
@@ -18,7 +18,7 @@ function _parseTag (tag_str, options) {
       if( /^!/.test(node_name) ) tag.warn = true;
       return '';
     })
-    .replace(/ *([^=]+) *= *"([\s\S]*?)"| *([^=]+) *= *'([\s\S]*?)'/g, function (_matched, attribute, value) {
+    .replace(/\b([^= ]+) *= *"([^"]*?)"|\b([^= ]+) *= *'([^']*?)'/g, function (_matched, attribute, value) {
       attribute = attribute.trim();
       if( attribute === 'style' ) value = value.replace(/([:;])\s+/g, '$1');
       if( options.compress_attibutes !== false ) value = value.replace(/ *\n */g, '').trim();
@@ -26,12 +26,13 @@ function _parseTag (tag_str, options) {
       return '';
     })
     .split(/ +/)
-    .reduce(function (tag, empty_attr) {
-      if( !empty_attr ) return tag;
-      tag.attrs[empty_attr.trim()] = '';
-      return tag;
-    }, tag)
-  ;
+    .forEach(function (empty_attr) {
+      empty_attr = empty_attr.trim();
+      if( !empty_attr ) return;
+      tag.attrs[empty_attr] = '';
+    });
+
+  return tag;
 }
 
 function _trimText (text) {
