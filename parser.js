@@ -41,15 +41,18 @@ function _trimText (text) {
 function _parseHTML (html, options) {
   options = options || {};
 
-  var contents = html.split(/<[^>]+?>/g);
-  var nodes = options.nodes || [],
+  var tokens = html.split(/(<[^>]+?>)/g),
+      nodes = options.nodes || [],
       node_opened = options.node_opened || { $: '__root__', _: nodes };
 
-  (html.match(/<([^>]+?)>/g) ||[]).map(function (tag, i) {
+  tokens.forEach(function (tag, i) {
 
-    if( /\S/.test(contents[i]) ) node_opened._.push({
-      text: _trimText(contents[i]),
-    });
+    if( !(i%2) ) {
+      if( /\S/.test(tag) ) node_opened._.push({
+        text: _trimText(tag),
+      });
+      return;
+    }
 
     tag = _parseTag(tag, options);
 
@@ -66,12 +69,6 @@ function _parseHTML (html, options) {
       node_opened = tag;
     }
 
-    return tag;
-
-  });
-
-  if( /\S$/.test(contents[contents.length - 1]) ) nodes.push({
-    text: _trimText(contents[contents.length - 1]),
   });
 
   return {
@@ -86,9 +83,9 @@ var full_content_tags = [
   'code',
 ];
 
-var RE_full_content = new RegExp( '<!--|-->|' + full_content_tags.map(function (tag_name) {
+var RE_full_content = new RegExp( '(' + '<!--|-->|' + full_content_tags.map(function (tag_name) {
   return '<' + tag_name + '[^>]*>|<\\/' + tag_name + '>';
-}).join('|'), 'g');
+}).join('|') + ')', 'g');
 
 function _cleanNodes (nodes) {
   nodes.forEach(function (tag) {
@@ -112,49 +109,47 @@ function _cleanNodes (nodes) {
 }
 
 function parseHTML (html, options) {
-  var tags = html.match(RE_full_content) ||[],
-      contents = html.split(RE_full_content),
-      tag_opened = null,
+  
+  var tag_opened = null,
       nodes = [],
       last_parse = {};
 
   options = options || {};
 
-  tags.forEach(function (tag, i) {
+  html.split(RE_full_content).forEach(function (token, i) {
 
-    if( tag_opened ) tag_opened._ = contents[i];
-    else last_parse = _parseHTML(contents[i], {
-      nodes: nodes,
-      node_opened: last_parse.node_opened,
-      remove_comments: options.remove_comments,
-      compress_attibutes: options.compress_attibutes
-    });
+    if( !(i%2) ) {
+      if( tag_opened ) tag_opened._ = token;
+      else last_parse = _parseHTML(token, {
+        nodes: nodes,
+        node_opened: last_parse.node_opened,
+        remove_comments: options.remove_comments,
+        compress_attibutes: options.compress_attibutes
+      });
+      return;
+    }
+
 
     if( tag_opened ) {
-      if( tag_opened.match_closer.test(tag) ) {
+      if( tag_opened.match_closer.test(token) ) {
         delete tag_opened.unclosed;
         tag_opened = null;
       } else {
-        tag_opened._ = tag;
+        tag_opened._ = token;
       }
     } else {
-      if( tag === '<!--' ) tag_opened = { comments: true, match_closer: /^-->$/, unclosed: true };
+      if( token === '<!--' ) tag_opened = { comments: true, match_closer: /^-->$/, unclosed: true };
       else {
-        tag_opened = _parseTag(tag, options);
+        tag_opened = _parseTag(token, options);
         tag_opened.match_closer = new RegExp('^<\\/ *' + tag_opened.$ + ' *>$');
       }
 
-      if( tag === '-->' ) throw new Error('unexpected comments closer \'-->\'');
-      if( tag_opened.closer ) throw new Error('unexpected tag closer \'' + tag.$ + '\'');
+      if( token === '-->' ) throw new Error('unexpected comments closer \'-->\'');
+      if( tag_opened.closer ) throw new Error('unexpected tag closer \'' + token + '\'');
 
       (last_parse.node_opened ? last_parse.node_opened._ : nodes).push(tag_opened);
     }
 
-  });
-
-  last_parse = _parseHTML(contents[contents.length - 1], {
-    nodes: nodes,
-    node_opened: last_parse.node_opened,
   });
 
   if( !options.ignore_unclosed && last_parse.node_opened && last_parse.node_opened.unclosed && !last_parse.node_opened.warn ) {
