@@ -42,11 +42,10 @@ function _trimText (text) {
 function _parseHTML (html, options) {
   options = options || {};
 
-  var tokens = html.split(/(<[^>]+?>)/g),
-      nodes = options.nodes || [],
+  var nodes = options.nodes || [],
       node_opened = options.node_opened || { $: '__root__', _: nodes };
 
-  tokens.forEach(function (tag, i) {
+  html.split(/(<[^>]+?>)/g).forEach(function (tag, i) {
 
     if( !(i%2) ) {
       if( /\S/.test(tag) ) node_opened._.push({
