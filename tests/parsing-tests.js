@@ -22,6 +22,22 @@ describe('parser', function () {
 
   });
 
+  it('empty attrs', function () {
+
+    assert.deepEqual( parseHTML(`
+<div id="foobar" foo-bar bar-foo foo bar>foo</div>
+    `), [{ $:'div', attrs:{ id: 'foobar', 'foo-bar': '', 'bar-foo': '', foo: '', bar: '' }, _:[{ text: 'foo' }] }] );
+
+  });
+
+  it('mixed empty attrs', function () {
+
+    assert.deepEqual( parseHTML(`
+<div id="foobar" foo-bar bar-foo="foo[bar]">foo</div>
+    `), [{ $:'div', attrs:{ id: 'foobar', 'foo-bar': '', 'bar-foo': 'foo[bar]' }, _:[{ text: 'foo' }] }] );
+
+  });
+
   it('throws', function () {
 
     assert.throws( () => parseHTML('<div id="foobar">'), Error );
