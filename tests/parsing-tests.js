@@ -56,6 +56,36 @@ describe('parser', function () {
 
   });
 
+  it('simple commente', function () {
+
+    assert.deepEqual( parseHTML(`
+<!-- foo bar -->
+    `), [{ comments: true, _: ' foo bar ' }] );
+
+  });
+
+  it('commented script', function () {
+
+    assert.deepEqual( parseHTML(`
+<!--<script template:type="text/javascript">
+  var foo = 'bar';
+</script>-->
+    `), [{ comments:true, _:`<script template:type="text/javascript">
+  var foo = 'bar';
+</script>` }] );
+
+  });
+
+  it('remove_comments', function () {
+
+    assert.deepEqual( parseHTML(`
+<!--<script template:type="text/javascript">
+  var foo = 'bar';
+</script>-->
+    `, { remove_comments: true }), [] );
+
+  });
+
   it('code', function () {
 
     assert.deepEqual( parseHTML(`

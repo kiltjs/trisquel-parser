@@ -39,11 +39,8 @@ function _trimText (text) {
   return text.replace(/ *\n+ */g, '');
 }
 
-function _parseHTML (html, options) {
+function _parseHTML (html, nodes, node_opened, options) {
   options = options || {};
-
-  var nodes = options.nodes || [],
-      node_opened = options.node_opened || { $: '__root__', _: nodes };
 
   html.split(/(<[^>]+?>)/g).forEach(function (tag, i) {
 
@@ -109,7 +106,7 @@ function _cleanNodes (nodes) {
 }
 
 function parseHTML (html, options) {
-  
+
   var tag_opened = null,
       nodes = [],
       last_parse = {};
@@ -119,13 +116,10 @@ function parseHTML (html, options) {
   html.split(RE_full_content).forEach(function (token, i) {
 
     if( !(i%2) ) {
-      if( tag_opened ) tag_opened._ = token;
-      else last_parse = _parseHTML(token, {
-        nodes: nodes,
-        node_opened: last_parse.node_opened,
-        remove_comments: options.remove_comments,
-        compress_attibutes: options.compress_attibutes
-      });
+      if( tag_opened ) {
+        if( typeof tag_opened._ === 'string' ) tag_opened._ += token;
+        else tag_opened._ = token;
+      } else last_parse = _parseHTML(token, nodes, last_parse.node_opened || { $: '__root__', _: nodes }, options);
       return;
     }
 
@@ -135,7 +129,8 @@ function parseHTML (html, options) {
         delete tag_opened.unclosed;
         tag_opened = null;
       } else {
-        tag_opened._ = token;
+        if( typeof tag_opened._ === 'string' ) tag_opened._ += token;
+        else tag_opened._ = token;
       }
     } else {
       if( token === '<!--' ) tag_opened = { comments: true, match_closer: /^-->$/, unclosed: true };
@@ -147,7 +142,9 @@ function parseHTML (html, options) {
       if( token === '-->' ) throw new Error('unexpected comments closer \'-->\'');
       if( tag_opened.closer ) throw new Error('unexpected tag closer \'' + token + '\'');
 
-      (last_parse.node_opened ? last_parse.node_opened._ : nodes).push(tag_opened);
+      if( !tag_opened.comments || !options.remove_comments ) {
+        (last_parse.node_opened ? last_parse.node_opened._ : nodes).push(tag_opened);
+      }
     }
 
   });
