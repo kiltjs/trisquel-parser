@@ -1,6 +1,6 @@
 {
   "name": "@triskel/parser",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "HTML parser",
   "main": "parser.js",
   "scripts": {
