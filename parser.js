@@ -45,9 +45,7 @@ function _parseHTML (html, nodes, node_opened, options) {
   html.split(/(<[^>]+?>)/g).forEach(function (tag, i) {
 
     if( !(i%2) ) {
-      if( /\S/.test(tag) ) node_opened._.push({
-        text: _trimText(tag),
-      });
+      if( /\S/.test(tag) ) node_opened._.push( _trimText(tag) );
       return;
     }
 
@@ -109,7 +107,7 @@ function parseHTML (html, options) {
 
   var tag_opened = null,
       nodes = [],
-      last_parse = {};
+      last_parse = { node_opened: { _: nodes } };
 
   options = options || {};
 
@@ -117,7 +115,8 @@ function parseHTML (html, options) {
 
     if( !(i%2) ) {
       if( tag_opened ) {
-        if( typeof tag_opened._ === 'string' ) tag_opened._ += token;
+        if( 'comments' in tag_opened ) tag_opened.comments += token;
+        else if( typeof tag_opened._ === 'string' ) tag_opened._ += token;
         else tag_opened._ = token;
       } else last_parse = _parseHTML(token, nodes, last_parse.node_opened || { $: '__root__', _: nodes }, options);
       return;
@@ -129,11 +128,12 @@ function parseHTML (html, options) {
         delete tag_opened.unclosed;
         tag_opened = null;
       } else {
-        if( typeof tag_opened._ === 'string' ) tag_opened._ += token;
+        if( 'comments' in tag_opened ) tag_opened.comments += token;
+        else if( typeof tag_opened._ === 'string' ) tag_opened._ += token;
         else tag_opened._ = token;
       }
     } else {
-      if( token === '<!--' ) tag_opened = { comments: true, match_closer: /^-->$/, unclosed: true };
+      if( token === '<!--' ) tag_opened = { comments: '', match_closer: /^-->$/, unclosed: true };
       else {
         tag_opened = _parseTag(token, options);
         tag_opened.match_closer = new RegExp('^<\\/ *' + tag_opened.$ + ' *>$');
@@ -142,8 +142,8 @@ function parseHTML (html, options) {
       if( token === '-->' ) throw new Error('unexpected comments closer \'-->\'');
       if( tag_opened.closer ) throw new Error('unexpected tag closer \'' + token + '\'');
 
-      if( !tag_opened.comments || !options.remove_comments ) {
-        (last_parse.node_opened ? last_parse.node_opened._ : nodes).push(tag_opened);
+      if( !('comments' in tag_opened) || !options.remove_comments ){
+        last_parse.node_opened._.push(tag_opened);
       }
     }
 

@@ -9,7 +9,7 @@ describe('parser', function () {
 
     assert.deepEqual( parseHTML(`
 <div id="foobar">foo</div>
-    `), [{ $:'div', attrs:{ id: 'foobar' }, _:[{ text: 'foo' }] }] );
+    `), [{ $:'div', attrs:{ id: 'foobar' }, _:['foo'] }] );
 
   });
 
@@ -18,7 +18,7 @@ describe('parser', function () {
     assert.deepEqual( parseHTML(`
 <div id="foobar"
      foo="bar">foo</div>
-    `), [{ $:'div', attrs:{ id: 'foobar', foo: 'bar' }, _:[{ text: 'foo' }] }] );
+    `), [{ $:'div', attrs:{ id: 'foobar', foo: 'bar' }, _:['foo'] }] );
 
   });
 
@@ -26,7 +26,7 @@ describe('parser', function () {
 
     assert.deepEqual( parseHTML(`
 <div id="foobar" foo-bar bar-foo foo bar>foo</div>
-    `), [{ $:'div', attrs:{ id: 'foobar', 'foo-bar': '', 'bar-foo': '', foo: '', bar: '' }, _:[{ text: 'foo' }] }] );
+    `), [{ $:'div', attrs:{ id: 'foobar', 'foo-bar': '', 'bar-foo': '', foo: '', bar: '' }, _:['foo'] }] );
 
   });
 
@@ -34,7 +34,7 @@ describe('parser', function () {
 
     assert.deepEqual( parseHTML(`
 <div id="foobar" foo-bar bar-foo="foo[bar]">foo</div>
-    `), [{ $:'div', attrs:{ id: 'foobar', 'foo-bar': '', 'bar-foo': 'foo[bar]' }, _:[{ text: 'foo' }] }] );
+    `), [{ $:'div', attrs:{ id: 'foobar', 'foo-bar': '', 'bar-foo': 'foo[bar]' }, _:['foo'] }] );
 
   });
 
@@ -56,11 +56,11 @@ describe('parser', function () {
 
   });
 
-  it('simple commente', function () {
+  it('simple comments', function () {
 
     assert.deepEqual( parseHTML(`
 <!-- foo bar -->
-    `), [{ comments: true, _: ' foo bar ' }] );
+    `), [{ comments: ' foo bar ' }] );
 
   });
 
@@ -70,7 +70,7 @@ describe('parser', function () {
 <!--<script template:type="text/javascript">
   var foo = 'bar';
 </script>-->
-    `), [{ comments:true, _:`<script template:type="text/javascript">
+    `), [{ comments: `<script template:type="text/javascript">
   var foo = 'bar';
 </script>` }] );
 
@@ -83,6 +83,16 @@ describe('parser', function () {
   var foo = 'bar';
 </script>-->
     `, { remove_comments: true }), [] );
+
+  });
+
+  it('remove_comments (2)', function () {
+
+    assert.deepEqual( parseHTML(`
+foo <!--<script template:type="text/javascript">
+  var foo = 'bar';
+</script>--> bar
+    `, { remove_comments: true }), ['foo ', ' bar'] );
 
   });
 
