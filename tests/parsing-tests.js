@@ -44,6 +44,22 @@ describe('parser', function () {
 
   });
 
+  it('gt in attributes', function () {
+
+    assert.deepEqual( parseHTML(`
+<div data-if=" foo > bar ">foobar</div>
+    `), [{ $:'div', attrs: { 'data-if': 'foo > bar' }, _:['foobar'] }] );
+
+  });
+
+  it('gt x2 in attributes', function () {
+
+    assert.deepEqual( parseHTML(`
+<div data-if=" foo > bar || bar > foo ">foobar</div>
+    `), [{ $:'div', attrs: { 'data-if': 'foo > bar || bar > foo' }, _:['foobar'] }] );
+
+  });
+
   it('script', function () {
 
     assert.deepEqual( parseHTML(`

@@ -39,10 +39,45 @@ function _trimText (text) {
   return text.replace(/ *\n+ */g, '');
 }
 
+function _fixTokens (tokens) {
+  var fixed_tokens = [ tokens[0] ],
+      close_next = false;
+
+  for( var i = 1, n = tokens.length; i < n ; i++ ) {
+    // if( /="[^"]+>$/.test(tokens[i]) ) {
+    //   // fixed_tokens[fixed_tokens.length - 1] += tokens[i];
+    //   fixed_tokens[fixed_tokens.length - 1] += tokens[i];
+    //   close_next = true;
+    // } else
+
+    if( close_next ) {
+      close_next = false;
+      tokens[i].replace(/([^"]*"[^>]*>)(.*)/, function (_matched, tail, next) {
+        fixed_tokens[fixed_tokens.length - 1] += tail;
+        fixed_tokens.push(next);
+      });
+    } else {
+      fixed_tokens.push(tokens[i]);
+    }
+    if( /="[^"]+>$/.test(tokens[i]) ) close_next = true;
+  }
+
+  return fixed_tokens;
+}
+
+function _tokenize (html) {
+  // var tokens = html.split(/(<[^>]+?>)/g);
+
+  // console.log('tokens', tokens );
+  // console.log('_fixTokens', _fixTokens( tokens ) );
+
+  return _fixTokens( html.split(/(<[^>]+?>)/g) );
+}
+
 function _parseHTML (html, nodes, node_opened, options) {
   options = options || {};
 
-  html.split(/(<[^>]+?>)/g).forEach(function (tag, i) {
+  _tokenize(html).forEach(function (tag, i) {
 
     if( !(i%2) ) {
       if( /\S/.test(tag) ) node_opened._.push( _trimText(tag) );
