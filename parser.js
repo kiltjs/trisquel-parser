@@ -186,7 +186,7 @@ function parseHTML (html, options) {
   });
 
   if( !options.ignore_unclosed && last_parse.node_opened && last_parse.node_opened.unclosed && !last_parse.node_opened.warn ) {
-    throw new Error('tab unclosed \'' + last_parse.node_opened.$ + '\'');
+    throw new Error('tag unclosed \'' + last_parse.node_opened.$ + '\'');
   }
 
   return _cleanNodes(nodes);
