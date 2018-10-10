@@ -90,8 +90,7 @@ parseHTML(`
             },
             _: [
               {
-                comments: true,
-                _: ' CentralNotice ',
+                comments: ' CentralNotice ',
               },
             ],
             $: 'div',
@@ -108,11 +107,7 @@ parseHTML(`
               class: 'firstHeading',
               lang: 'es',
             },
-            _: [
-              {
-                text: 'Wikipedia:Portada',
-              },
-            ],
+            _: 'Wikipedia:Portada',
             $: 'h1',
           },
           {
@@ -125,11 +120,7 @@ parseHTML(`
                 attrs: {
                   id: 'siteSub',
                 },
-                _: [
-                  {
-                    text: 'De Wikipedia, la enciclopedia libre',
-                  },
-                ],
+                _: 'De Wikipedia, la enciclopedia libre',
                 $: 'div',
               },
               {
@@ -144,32 +135,20 @@ parseHTML(`
                   class: 'mw-jump',
                 },
                 _: [
-                  {
-                    text: 'Saltar a:          ',
-                  },
+                  'Saltar a:          ',
                   {
                     attrs: {
                       href: '#mw-head',
                     },
-                    _: [
-                      {
-                        text: 'navegación',
-                      },
-                    ],
+                    _: 'navegación',
                     $: 'a',
                   },
-                  {
-                    text: ',           ',
-                  },
+                  ',           ',
                   {
                     attrs: {
                       href: '#p-search',
                     },
-                    _: [
-                      {
-                        text: 'búsqueda',
-                      },
-                    ],
+                    _: 'búsqueda',
                     $: 'a',
                   },
                 ],
