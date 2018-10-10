@@ -9,7 +9,7 @@ describe('parser', function () {
 
     assert.deepEqual( parseHTML(`
 <div id="foobar">foo</div>
-    `), [{ $:'div', attrs:{ id: 'foobar' }, _:['foo'] }] );
+    `), [{ $:'div', attrs:{ id: 'foobar' }, _:'foo' }] );
 
   });
 
@@ -18,7 +18,7 @@ describe('parser', function () {
     assert.deepEqual( parseHTML(`
 <div id="foobar"
      foo="bar">foo</div>
-    `), [{ $:'div', attrs:{ id: 'foobar', foo: 'bar' }, _:['foo'] }] );
+    `), [{ $:'div', attrs:{ id: 'foobar', foo: 'bar' }, _:'foo' }] );
 
   });
 
@@ -26,7 +26,7 @@ describe('parser', function () {
 
     assert.deepEqual( parseHTML(`
 <div id="foobar" foo-bar bar-foo foo bar>foo</div>
-    `), [{ $:'div', attrs:{ id: 'foobar', 'foo-bar': '', 'bar-foo': '', foo: '', bar: '' }, _:['foo'] }] );
+    `), [{ $:'div', attrs:{ id: 'foobar', 'foo-bar': '', 'bar-foo': '', foo: '', bar: '' }, _:'foo' }] );
 
   });
 
@@ -34,7 +34,7 @@ describe('parser', function () {
 
     assert.deepEqual( parseHTML(`
 <div id="foobar" foo-bar bar-foo="foo[bar]">foo</div>
-    `), [{ $:'div', attrs:{ id: 'foobar', 'foo-bar': '', 'bar-foo': 'foo[bar]' }, _:['foo'] }] );
+    `), [{ $:'div', attrs:{ id: 'foobar', 'foo-bar': '', 'bar-foo': 'foo[bar]' }, _:'foo' }] );
 
   });
 
@@ -48,7 +48,7 @@ describe('parser', function () {
 
     assert.deepEqual( parseHTML(`
 <div data-if=" foo > bar ">foobar</div>
-    `), [{ $:'div', attrs: { 'data-if': 'foo > bar' }, _:['foobar'] }] );
+    `), [{ $:'div', attrs: { 'data-if': 'foo > bar' }, _:'foobar' }] );
 
   });
 
@@ -56,7 +56,7 @@ describe('parser', function () {
 
     assert.deepEqual( parseHTML(`
 <div data-if=" foo > bar || bar > foo ">foobar</div>
-    `), [{ $:'div', attrs: { 'data-if': 'foo > bar || bar > foo' }, _:['foobar'] }] );
+    `), [{ $:'div', attrs: { 'data-if': 'foo > bar || bar > foo' }, _:'foobar' }] );
 
   });
 

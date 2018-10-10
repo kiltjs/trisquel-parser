@@ -132,6 +132,7 @@ function _cleanNodes (nodes) {
     // cleaning empty children
     if( tag._ instanceof Array ) {
       if( !tag._.length ) delete tag._;
+      else if( tag._.length === 1 && typeof tag._[0] === 'string' ) tag._ = tag._[0];
       else _cleanNodes(tag._);
     }
 
