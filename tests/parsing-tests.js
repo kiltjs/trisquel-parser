@@ -1,7 +1,7 @@
 /* global describe, it */
 
 var parseHTML = require('../parser'),
-    assert = require('assert');
+    assert = require('assert')
 
 describe('parser', function () {
 
@@ -9,56 +9,68 @@ describe('parser', function () {
 
     assert.deepEqual( parseHTML(`
 <div id="foobar">foo</div>
-    `), [{ $:'div', attrs:{ id: 'foobar' }, _:'foo' }] );
+    `), [{ $:'div', attrs:{ id: 'foobar' }, _:'foo' }] )
 
-  });
+  })
 
   it('attrs in lines', function () {
 
     assert.deepEqual( parseHTML(`
 <div id="foobar"
      foo="bar">foo</div>
-    `), [{ $:'div', attrs:{ id: 'foobar', foo: 'bar' }, _:'foo' }] );
+    `), [{ $:'div', attrs:{ id: 'foobar', foo: 'bar' }, _:'foo' }] )
 
-  });
+  })
 
   it('empty attrs', function () {
 
     assert.deepEqual( parseHTML(`
 <div id="foobar" foo-bar bar-foo foo bar>foo</div>
-    `), [{ $:'div', attrs:{ id: 'foobar', 'foo-bar': '', 'bar-foo': '', foo: '', bar: '' }, _:'foo' }] );
+    `), [{ $:'div', attrs:{ id: 'foobar', 'foo-bar': '', 'bar-foo': '', foo: '', bar: '' }, _:'foo' }] )
 
-  });
+  })
 
   it('mixed empty attrs', function () {
 
     assert.deepEqual( parseHTML(`
 <div id="foobar" foo-bar bar-foo="foo[bar]">foo</div>
-    `), [{ $:'div', attrs:{ id: 'foobar', 'foo-bar': '', 'bar-foo': 'foo[bar]' }, _:'foo' }] );
+    `), [{ $:'div', attrs:{ id: 'foobar', 'foo-bar': '', 'bar-foo': 'foo[bar]' }, _:'foo' }] )
 
-  });
+  })
+
+  it('several p', function () {
+
+    assert.deepEqual( parseHTML(`
+    <p>Lorem ipsum...</p><p>dolor sit...</p><p>amet...</p>
+    `),[
+      { $: 'p', _: 'Lorem ipsum...' },
+      { $: 'p', _: 'dolor sit...' },
+      { $: 'p', _: 'amet...' },
+    ] )
+
+  })
 
   it('throws', function () {
 
-    assert.throws( () => parseHTML('<div id="foobar">'), Error );
+    assert.throws( () => parseHTML('<div id="foobar">'), Error )
 
-  });
+  })
 
   it('gt in attributes', function () {
 
     assert.deepEqual( parseHTML(`
 <div data-if=" foo > bar ">foobar</div>
-    `), [{ $:'div', attrs: { 'data-if': 'foo > bar' }, _:'foobar' }] );
+    `), [{ $:'div', attrs: { 'data-if': 'foo > bar' }, _:'foobar' }] )
 
-  });
+  })
 
   it('gt x2 in attributes', function () {
 
     assert.deepEqual( parseHTML(`
 <div data-if=" foo > bar || bar > foo ">foobar</div>
-    `), [{ $:'div', attrs: { 'data-if': 'foo > bar || bar > foo' }, _:'foobar' }] );
+    `), [{ $:'div', attrs: { 'data-if': 'foo > bar || bar > foo' }, _:'foobar' }] )
 
-  });
+  })
 
   it('script', function () {
 
@@ -68,17 +80,17 @@ describe('parser', function () {
 </script>
     `), [{ $:'script', attrs: { 'template:type': 'text/javascript' }, _:`
   var foo = 'bar';
-` }] );
+` }] )
 
-  });
+  })
 
   it('simple comments', function () {
 
     assert.deepEqual( parseHTML(`
 <!-- foo bar -->
-    `), [{ comments: ' foo bar ' }] );
+    `), [{ comments: ' foo bar ' }] )
 
-  });
+  })
 
   it('commented script', function () {
 
@@ -88,9 +100,9 @@ describe('parser', function () {
 </script>-->
     `), [{ comments: `<script template:type="text/javascript">
   var foo = 'bar';
-</script>` }] );
+</script>` }] )
 
-  });
+  })
 
   it('remove_comments', function () {
 
@@ -98,9 +110,9 @@ describe('parser', function () {
 <!--<script template:type="text/javascript">
   var foo = 'bar';
 </script>-->
-    `, { remove_comments: true }), [] );
+    `, { remove_comments: true }), [] )
 
-  });
+  })
 
   it('remove_comments (2)', function () {
 
@@ -108,9 +120,9 @@ describe('parser', function () {
 foo <!--<script template:type="text/javascript">
   var foo = 'bar';
 </script>--> bar
-    `, { remove_comments: true }), ['foo ', ' bar'] );
+    `, { remove_comments: true }), ['foo ', ' bar'] )
 
-  });
+  })
 
   it('code', function () {
 
@@ -130,9 +142,9 @@ foo <!--<script template:type="text/javascript">
   <body></body>
 <html>
 `
-    }] }] );
+    }] }] )
 
-  });
+  })
 
   it('img', function () {
 
@@ -154,8 +166,8 @@ foo <!--<script template:type="text/javascript">
           }
         ]
       }
-    ] );
+    ] )
 
-  });
+  })
 
-});
+})
