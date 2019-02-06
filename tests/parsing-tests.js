@@ -56,11 +56,61 @@ describe('parser', function () {
 
   })
 
+  it('lt in attributes', function () {
+
+    assert.deepEqual( parseHTML(`
+<div data-if=" foo < bar ">foobar</div>
+    `), [{ $:'div', attrs: { 'data-if': 'foo < bar' }, _:'foobar' }] )
+
+  })
+
   it('gt in attributes', function () {
 
     assert.deepEqual( parseHTML(`
 <div data-if=" foo > bar ">foobar</div>
     `), [{ $:'div', attrs: { 'data-if': 'foo > bar' }, _:'foobar' }] )
+
+  })
+
+  it('lt && gt in attributes', function () {
+
+    assert.deepEqual( parseHTML(`
+<div data-if=" foo < bar && foo > bar ">foobar</div>
+    `), [{ $:'div', attrs: { 'data-if': 'foo < bar && foo > bar' }, _:'foobar' }] )
+
+  })
+
+  it('several lt attributes', function () {
+
+    assert.deepEqual( parseHTML(`
+<foo-bar foo=" bar < foo && bar < foo "></foo-bar>
+    `), [{ $:'foo-bar', attrs: { foo: 'bar < foo && bar < foo' } }] )
+
+  })
+
+  it('several gt attributes', function () {
+
+    assert.deepEqual( parseHTML(`
+<foo-bar foo=" bar > foo && bar > foo "></foo-bar>
+    `), [{ $:'foo-bar', attrs: { foo: 'bar > foo && bar > foo' } }] )
+
+  })
+
+  it('several lt && gt attributes', function () {
+
+    assert.deepEqual( parseHTML(`
+<foo-bar foo=" bar > foo && bar < foo && bar < foo && bar > foo "></foo-bar>
+    `), [{ $:'foo-bar', attrs: { foo: 'bar > foo && bar < foo && bar < foo && bar > foo' } }] )
+
+  })
+
+  it('several lines attributes', function () {
+
+    assert.deepEqual( parseHTML(`
+<foo-bar
+  foo="bar"
+  bar="foo"></foo-bar>
+    `), [{ $:'foo-bar', attrs: { foo: 'bar', bar: 'foo' } }] )
 
   })
 

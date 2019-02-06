@@ -15,7 +15,7 @@ function _parseTag (tag_str, options) {
       return ''
     })
     .replace(/^[^ ]+/, function (node_name) {
-      tag.$ = node_name
+      tag.$ = node_name.trim()
       if( /^!/.test(node_name) ) tag.warn = true
       return ''
     })
@@ -42,7 +42,8 @@ function _trimText (text) {
 
 function _fixTokens (tokens) {
   var fixed_tokens = [ tokens[0] ],
-      close_next = false
+      close_double_quote = false,
+      close_single_quote = false
 
   for( var i = 1, n = tokens.length; i < n ; i++ ) {
     // if( /="[^"]+>$/.test(tokens[i]) ) {
@@ -51,16 +52,31 @@ function _fixTokens (tokens) {
     //   close_next = true;
     // } else
 
-    if( close_next ) {
-      close_next = false
-      tokens[i].replace(/([^"]*"[^>]*>)(.*)/, function (_matched, tail, next) {
-        fixed_tokens[fixed_tokens.length - 1] += tail
-        fixed_tokens.push(next)
-      })
+    if( close_single_quote ) {
+      if( /'/.test(tokens[i]) ) {
+        close_double_quote = false
+        tokens[i].replace(/([^']*'[^>]*>)(.*)/, function (_matched, tail, next) {
+          fixed_tokens[fixed_tokens.length - 1] += tail
+          fixed_tokens.push(next)
+        })
+      } else {
+        fixed_tokens[fixed_tokens.length - 1] += tokens[i]
+      }
+    } else if( close_double_quote ) {
+      if( /"/.test(tokens[i]) ) {
+        close_double_quote = false
+        tokens[i].replace(/([^"]*"[^>]*>)(.*)/, function (_matched, tail, next) {
+          fixed_tokens[fixed_tokens.length - 1] += tail
+          fixed_tokens.push(next)
+        })
+      } else {
+        fixed_tokens[fixed_tokens.length - 1] += tokens[i]
+      }
     } else {
       fixed_tokens.push(tokens[i])
     }
-    if( /="[^"]+>$/.test(tokens[i]) ) close_next = true
+    if( /="[^"]*>$/.test(tokens[i]) ) close_double_quote = true
+    else if( /='[^']*>$/.test(tokens[i]) ) close_single_quote = true
   }
 
   return fixed_tokens
