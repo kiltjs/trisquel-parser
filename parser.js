@@ -164,7 +164,7 @@ function parseHTML (html, options) {
 
   options = options || {}
 
-  html.split(RE_full_content).forEach(function (token, i) {
+  _fixTokens(html.split(RE_full_content)).forEach(function (token, i) {
 
     if( !(i%2) ) {
       if( tag_opened ) {
