@@ -6,4 +6,5 @@ steps:
 - name: test
   image: node:10
   commands:
+  - make install
   - make test
