@@ -30,6 +30,9 @@ describe('parseTag', function () {
 
     [ '<!DOCTYPE html>', { $: 'DOCTYPE', attrs: { html: '' }, warn: true } ],
 
+    [ '<img src="./pic.png"/>', { $: 'img', attrs: { src: './pic.png' }, self_closed: true } ],
+    [ '<img src="./pic.png" />', { $: 'img', attrs: { src: './pic.png' }, self_closed: true } ],
+
   ].forEach( (test_case) => _runTestCases.apply(null, test_case) )
 
 })

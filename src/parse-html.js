@@ -1,27 +1,24 @@
 import { extractQuotes, restoreQuotes } from './isolate-quotes'
 import { parseTag } from './parse-tag'
 
-/**
- * 
- * @param {*} html 
- * @param {*} raw_tags 
- */
-export function parseRawTags (html, raw_tags = [], options = {}) {
+export function parseRawTags (html, options = {}) {
   if( typeof html !== 'string' ) throw new TypeError('html source should be a String')
-  if( !raw_tags.length ) throw new Error('missing raw_tags to extract')
+  if( options.raw_tags && !options.raw_tags.length ) throw new Error('raw_tags can not be empty')
 
   const tag_prop = options.tag_prop || '$'
   const content_prop = options.content_prop || '_'
   const _quotes = extractQuotes(html)
 
-  const RE_full_content = new RegExp( '(' + raw_tags.map(function (tag_name) {
-    return '<' + tag_name + '[^>]*>|<\\/' + tag_name + '>'
-  }).join('|') + ')', 'g')
+  const RE_tags = options.raw_tags
+    ? new RegExp( '(' + options.raw_tags.map(function (tag_name) {
+        return '<' + tag_name + '[^>]*>|<\\/' + tag_name + '>'
+      }).join('|') + ')', 'g')
+    : /(<[^>]+?>)/g
 
   var current_tag = null
 
-  return _quotes.text
-    .split(RE_full_content)
+  const ast = _quotes.text
+    .split(RE_tags)
     .reduce(function (_ast, token, i) {
       const _token = restoreQuotes(token, _quotes.dquotes, _quotes.squotes)
 
@@ -52,4 +49,9 @@ export function parseRawTags (html, raw_tags = [], options = {}) {
 
     }, [])
 
+
+  return {
+    ast,
+    tag_opened: current_tag,
+  }
 }
