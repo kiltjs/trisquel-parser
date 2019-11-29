@@ -21,6 +21,9 @@
   },
   "homepage": "https://github.com/triskeljs/parser#readme",
   "devDependencies": {
+    "@babel/core": "^7.7.4",
+    "@babel/preset-env": "^7.7.4",
+    "@babel/register": "^7.7.4",
     "eslint": "5.0.1",
     "mocha": "5.2.0"
   },

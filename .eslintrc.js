@@ -1,40 +1,51 @@
 module.exports = {
-    "env": {
-      "browser": true,
-      "es6": true
+  "env": {
+    "browser": true,
+    "es6": true
+  },
+  "globals": {
+    "module": true,
+    "define": true,
+    "require": true,
+    "global": true
+  },
+  "parserOptions": {
+    "ecmaVersion": 9,
+    "sourceType": "module",
+  },
+  "extends": "eslint:recommended",
+  "rules": {
+    "no-console": 1,
+    "linebreak-style": [
+        "error",
+        "unix"
+    ],
+    "quotes": [
+        "error",
+        "single",
+        { "allowTemplateLiterals": true }
+    ],
+    "semi": [
+        "error",
+        "never"
+    ],
+    "no-unused-vars": [
+        "error",
+        {
+            "args": "after-used",
+            "argsIgnorePattern": "^_\\w+"
+        }
+    ]
+  },
+  "overrides": [
+    {
+      "files": ["{,**/}*.test.js"],
+      "globals": {
+        process: true,
+        __filename: true,
+        describe: true,
+        it: true,
+      },
     },
-    "globals": {
-      "module": true,
-      "define": true,
-      "require": true,
-      "global": true
-    },
-    "parserOptions": {
-      "ecmaVersion": 6,
-      "sourceType": "module",
-    },
-    "extends": "eslint:recommended",
-    "rules": {
-      "no-console": 1,
-      "linebreak-style": [
-          "error",
-          "unix"
-      ],
-      "quotes": [
-          "error",
-          "single",
-          { "allowTemplateLiterals": true }
-      ],
-      "semi": [
-          "error",
-          "never"
-      ],
-      "no-unused-vars": [
-          "error",
-          {
-              "args": "after-used",
-              "argsIgnorePattern": "^_\\w+"
-          }
-      ]
-    }
-};
+  ]
+}

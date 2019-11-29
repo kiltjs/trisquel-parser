@@ -11,11 +11,16 @@ install:
 	npm install
 
 eslint:
-	$(shell npm bin)/eslint parser.js
-	$(shell npm bin)/eslint tests
+	npx eslint src
+	npx eslint parser.js
+	npx eslint tests
 
-test: install eslint
-	@$(shell npm bin)/mocha tests/*-tests.js
+lint:
+	npx eslint src
+
+test: lint
+	npx mocha --require @babel/register src/*.test.js
+	# npx mocha tests/*-tests.js
 
 npm.publish:
 	echo "building ${NPM_VERSION}"
