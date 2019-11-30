@@ -16,6 +16,8 @@ module.exports = {
   "extends": "eslint:recommended",
   "rules": {
     "no-console": 1,
+    "no-unexpected-multiline": "error",
+    "no-irregular-whitespace": "off",
     "linebreak-style": [
         "error",
         "unix"

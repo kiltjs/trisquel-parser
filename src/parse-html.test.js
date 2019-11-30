@@ -1,37 +1,37 @@
 
 import assert from 'assert'
 
-import { parseRawTags } from './parse-html'
+import { parseTags, parseComments } from './parse-html'
 
 /** */
 describe( '.' + __filename.substr( process.cwd().length ), function () {
 // --------------------------------------
 
-describe('parseRawTags: throws', function () {
+describe('parseTags: throws', function () {
 
   it('html source should be a String', function () {
 
     assert.throws(function () {
-      parseRawTags()
+      parseTags()
     }, /html source should be a String/)
 
     assert.throws(function () {
-      parseRawTags()
+      parseTags()
     }, TypeError)
 
   })
 
 })
 
-describe('parseRawTags({ raw_tags })', function () {
+describe('parseTags({ raw_tags })', function () {
 
-  function _runTestCases (html, raw_tags, result) {
+  function _runTestCases (html, result, raw_tags = 'script, style, code') {
 
     it(`${ html } [${ raw_tags }]`, function () {
 
       assert.deepStrictEqual(
-        parseRawTags(html, { raw_tags: raw_tags.split(/ *, */) }),
-        { ast: result, tag_opened: null },
+        parseTags(html, { raw_tags: raw_tags.split(/ *, */) }),
+        { ast: result, opened_tags: [] },
       )
 
     })
@@ -40,24 +40,26 @@ describe('parseRawTags({ raw_tags })', function () {
 
   [
 
-    [ '<div>', 'script, style, code', [ '<div>' ] ],
-    [ '<div data-value="foo">', 'script, style, code', [ '<div data-value="foo">' ] ],
+    [ '<div>', [ '<div>' ] ],
+    [ '<div data-value="foo">', [ '<div data-value="foo">' ] ],
+    
+    [ '<style>foo</style>', [ { $: 'style', _: 'foo' } ] ],
 
-    [ '<div><style>foobar</style></div>', 'script, style, code', ['<div>', { $: 'style', _: 'foobar' }, '</div>'] ],
-    [ '<div><style><div>foobar</div></style></div>', 'script, style, code', ['<div>', { $: 'style', _: '<div>foobar</div>' }, '</div>'] ],
+    [ '<div><style>foobar</style></div>', ['<div>', { $: 'style', _: 'foobar' }, '</div>'] ],
+    [ '<div><style><div>foobar</div></style></div>', ['<div>', { $: 'style', _: '<div>foobar</div>' }, '</div>'] ],
 
-    [ '<div><style data-foo="bar"><div>foobar</div></style></div>', 'script, style, code', [
+    [ '<div><style data-foo="bar"><div>foobar</div></style></div>', [
       '<div>', { $: 'style', attrs: { 'data-foo': 'bar' }, _: '<div>foobar</div>' }, '</div>'
     ] ],
 
-    [ '<div><style data-foo=" foo < foobar > bar "><div>foobar</div></style></div>', 'script, style, code', [
+    [ '<div><style data-foo=" foo < foobar > bar "><div>foobar</div></style></div>', [
       '<div>', { $: 'style', attrs: { 'data-foo': 'foo < foobar > bar' }, _: '<div>foobar</div>' }, '</div>'
     ] ],
 
     [ `<div><style data-foo="{
       foo: foobar > foo,
       bar: foobar < bar,
-    }"><div>foobar</div></style></div>`, 'script, style, code', [
+    }"><div>foobar</div></style></div>`, [
       '<div>', { $: 'style', attrs: { 'data-foo': '{foo: foobar > foo,bar: foobar < bar,}' }, _: '<div>foobar</div>' }, '</div>'
     ] ],
 
@@ -65,48 +67,57 @@ describe('parseRawTags({ raw_tags })', function () {
 
 })
 
+describe('parseComments', function () {
 
-// describe('parseTags({ !raw_tags })', function () {
+  function _runTestCases (html, result) {
+    
+    it(`${ html }`, function () {
 
-//   function _runTestCases (html, result) {
+      assert.deepStrictEqual(
+        parseComments(html),
+        result,
+      )
 
-//     it(`${ html }`, function () {
+    })
 
-//       assert.deepStrictEqual(
-//         parseTags(html),
-//         { ast: result, tag_opened: null },
-//       )
+  }
 
-//     })
+  [
 
-//   }
+    ['<!-- foo -->', [{ comment: ' foo ' }] ],
+    ['<!-- <!-- -->', [{ comment: ' <!-- ' }] ],
 
-//   [
+    ['<!-- foo --> foobar <!-- bar -->', [{ comment: ' foo ' }, ' foobar ', { comment: ' bar ' }] ],
 
-//     [ '<div>', [ { $: 'div' } ] ],
-//     [ '<div data-value="foo">', [ { $: 'div', attrs: { 'data-value': 'foo' } } ] ],
+  ].forEach( (test_case) => _runTestCases.apply(null, test_case) )
 
-//     [ '<div><style>foobar</style></div>', ['<div>', { $: 'style', _: 'foobar' }, '</div>'] ],
-//     [ '<div><style><div>foobar</div></style></div>', ['<div>', { $: 'style', _: '<div>foobar</div>' }, '</div>'] ],
+})
 
-//     [ '<div><style data-foo="bar"><div>foobar</div></style></div>', [
-//       '<div>', { $: 'style', attrs: { 'data-foo': 'bar' }, _: '<div>foobar</div>' }, '</div>'
-//     ] ],
+describe('parseTags({ !raw_tags })', function () {
 
-//     [ '<div><style data-foo=" foo < foobar > bar "><div>foobar</div></style></div>', [
-//       '<div>', { $: 'style', attrs: { 'data-foo': 'foo < foobar > bar' }, _: '<div>foobar</div>' }, '</div>'
-//     ] ],
+  function _runTestCases (html, result, opened_tags = []) {
 
-//     [ `<div><style data-foo="{
-//       foo: foobar > foo,
-//       bar: foobar < bar,
-//     }"><div>foobar</div></style></div>`, [
-//       '<div>', { $: 'style', attrs: { 'data-foo': '{foo: foobar > foo,bar: foobar < bar,}' }, _: '<div>foobar</div>' }, '</div>'
-//     ] ],
+    it(`${ html }`, function () {
 
-//   ].forEach( (test_case) => _runTestCases.apply(null, test_case) )
+      assert.deepStrictEqual(
+        parseTags(html),
+        { ast: result, opened_tags },
+      )
 
-// })
+    })
+
+  }
+
+  [
+
+    [ '<div>', [ { $: 'div', _: [] } ], [{ $: 'div', _: [] }] ],
+    [ '<div data-value="foo">', [ { $: 'div', attrs: { 'data-value': 'foo' }, _: []  } ], [ { $: 'div', attrs: { 'data-value': 'foo' }, _: [] } ] ],
+
+    [ '<div data-value="foo" />', [ { $: 'div', attrs: { 'data-value': 'foo' }, self_closed: true  } ] ],
+
+  ].forEach( (test_case) => _runTestCases.apply(null, test_case) )
+
+})
 
 /** */
 })

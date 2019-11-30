@@ -5,7 +5,8 @@ export function parseTag (tag_str, options = {}) {
 
   tag_str
     .replace(/^<|>$/g, '')
-    .replace(/ *\/$/, function () {
+    .trim()
+    .replace(/\/$/, function () {
       // delete tag.unclosed
       tag.self_closed = true
       return ''
