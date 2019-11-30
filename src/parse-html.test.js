@@ -63,6 +63,21 @@ describe('parseTags({ raw_tags })', function () {
       '<div>', { $: 'style', attrs: { 'data-foo': '{foo: foobar > foo,bar: foobar < bar,}' }, _: '<div>foobar</div>' }, '</div>'
     ] ],
 
+    [`<pre><code class="language-html">
+<!DOCTYPE html>
+<html>
+  <head></head>
+  <body></body>
+<html>
+</code></pre>`, ['<pre>', {
+      $: 'code', attrs: { class: 'language-html' }, _: `
+<!DOCTYPE html>
+<html>
+  <head></head>
+  <body></body>
+<html>
+` }, '</pre>' ] ],
+
   ].forEach( (test_case) => _runTestCases.apply(null, test_case) )
 
 })
