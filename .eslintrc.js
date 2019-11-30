@@ -1,42 +1,37 @@
+
 module.exports = {
-  "env": {
-    "browser": true,
-    "es6": true
-  },
-  "globals": {
-    "module": true,
-    "define": true,
-    "require": true,
-    "global": true
-  },
   "parserOptions": {
     "ecmaVersion": 9,
     "sourceType": "module",
   },
   "extends": "eslint:recommended",
   "rules": {
-    "no-console": 1,
+    "no-console": ["warn"],
     "no-unexpected-multiline": "error",
     "no-irregular-whitespace": "off",
     "linebreak-style": [
-        "error",
-        "unix"
+      "error",
+      "unix"
     ],
     "quotes": [
-        "error",
-        "single",
-        { "allowTemplateLiterals": true }
+      "error",
+      "single"
     ],
+    // "semi": [
+    //   "error",
+    //   "always"
+    // ],
     "semi": [
-        "error",
-        "never"
+      "error",
+      "never"
     ],
+    // "no-unused-vars": 0
     "no-unused-vars": [
-        "error",
-        {
-            "args": "after-used",
-            "argsIgnorePattern": "^_\\w+"
-        }
+      "error",
+      {
+          "args": "after-used",
+          "argsIgnorePattern": "^_\\w+"
+      }
     ]
   },
   "overrides": [
@@ -44,9 +39,9 @@ module.exports = {
       "files": ["{,**/}*.test.js"],
       "globals": {
         process: true,
-        __filename: true,
         describe: true,
         it: true,
+        __filename: true,
       },
     },
   ]
