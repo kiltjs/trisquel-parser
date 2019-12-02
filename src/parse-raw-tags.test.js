@@ -1,22 +1,22 @@
 
 import assert from 'assert'
 
-import { parseTags, parseRawTags, parseComments } from './parse-html'
+import { parseRawTags } from './parse-raw-tags'
 
 /** */
 describe( '.' + __filename.substr( process.cwd().length ), function () {
 // --------------------------------------
 
-describe('parseTags: throws', function () {
+describe('parseRawTags: throws', function () {
 
   it('html source should be a String', function () {
 
     assert.throws(function () {
-      parseTags()
+      parseRawTags()
     }, /html source should be a String/)
 
     assert.throws(function () {
-      parseTags()
+      parseRawTags()
     }, TypeError)
 
   })
@@ -88,13 +88,13 @@ describe('parseRawTags', function () {
 
 describe('parseComments', function () {
 
-  function _runTestCases (html, result) {
+  function _runTestCases (html, result, options = {}) {
     
-    it(`${ html }`, function () {
+    it(`${ html }${ options ? (' | ' + JSON.stringify(options) + ')') : '' }`, function () {
 
       assert.deepStrictEqual(
-        parseComments(html),
-        result,
+        parseRawTags(html, ['code'], options),
+        { ast: result, opened_tags: [] },
       )
 
     })
@@ -108,31 +108,13 @@ describe('parseComments', function () {
 
     ['<!-- foo --> foobar <!-- bar -->', [{ type: 'comment', _: ' foo ' }, ' foobar ', { type: 'comment', _: ' bar ' }] ],
 
-  ].forEach( (test_case) => _runTestCases.apply(null, test_case) )
+    ['<!-- foo <code>foobar</code> bar -->', [{ type: 'comment', _: ' foo <code>foobar</code> bar ' }] ],
 
-})
+    ['<code><!-- foobar --></code>', [{ $: 'code', _: '<!-- foobar -->' }] ],
 
-describe('parseTags({ !raw_tags })', function () {
+    ['<code><!-- foobar --></code><!-- foobar -->', [{ $: 'code', _: '<!-- foobar -->' }, { type: 'comment', _: ' foobar ' }] ],
 
-  function _runTestCases (html, result, opened_tags = []) {
-
-    it(`${ html }`, function () {
-
-      assert.deepStrictEqual(
-        parseTags(html),
-        { ast: result, opened_tags },
-      )
-
-    })
-
-  }
-
-  [
-
-    [ '<div>', [ { $: 'div', _: [] } ], [{ $: 'div', _: [] }] ],
-    [ '<div data-value="foo">', [ { $: 'div', attrs: { 'data-value': 'foo' }, _: []  } ], [ { $: 'div', attrs: { 'data-value': 'foo' }, _: [] } ] ],
-
-    [ '<div data-value="foo" />', [ { $: 'div', attrs: { 'data-value': 'foo' }, self_closed: true  } ] ],
+    ['<code><!-- foobar --></code><!-- foobar -->', [{ $: 'code', _: '<!-- foobar -->' }], { remove_comments: true } ],
 
   ].forEach( (test_case) => _runTestCases.apply(null, test_case) )
 

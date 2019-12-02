@@ -28,7 +28,7 @@ describe('parseTag', function () {
     [ '<div class="foo">', { $: 'div', attrs: { class: 'foo' } } ],
     [ '<div id="foo">', { $: 'div', attrs: { id: 'foo' } } ],
 
-    [ '<!DOCTYPE html>', { $: 'DOCTYPE', attrs: { html: '' }, warn: true } ],
+    [ '<!DOCTYPE html>', { $: '!DOCTYPE', attrs: { html: '' }, type: 'directive' } ],
 
     [ '<img src="./pic.png"/>', { $: 'img', attrs: { src: './pic.png' }, self_closed: true } ],
     [ '<img src="./pic.png" />', { $: 'img', attrs: { src: './pic.png' }, self_closed: true } ],

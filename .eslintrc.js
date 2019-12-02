@@ -42,6 +42,7 @@ module.exports = {
         describe: true,
         it: true,
         __filename: true,
+        console: true,
       },
     },
   ]

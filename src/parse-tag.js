@@ -18,8 +18,8 @@ export function parseTag (tag_str, options = {}) {
     })
     .replace(/^[^ ]+/, function (node_name) {
       if( /^!/.test(node_name) ) {
-        tag[tag_prop] = node_name.trim().substr(1)
-        tag.warn = true
+        tag[tag_prop] = node_name.trim()
+        tag.type = 'directive'
       } else {
         tag[tag_prop] = node_name.trim()
       }

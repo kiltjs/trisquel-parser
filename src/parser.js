@@ -1,43 +1,42 @@
 
-import { parseComments, parseTags } from './parse-html'
+import { parseRawTags } from './parse-raw-tags'
+import { parseTags } from './parse-tags'
 
 const html_raw_tags = ['script', 'style', 'code']
+const arrayPush = Array.prototype.push
 
 export function parseHTML (html, options = {}) {
   const raw_tags = options.raw_tags || html_raw_tags
   var opened_tags = null
 
-  var ast = parseComments(html, { remove_comments: options.remove_comments })
-    .reduce(function (_ast, token) {
-      if( typeof token !== 'string' ) {
-        _ast.push(token)
-      } else {
-        let _result = parseTags(html, { raw_tags, opened_tags })
-        opened_tags = _result.opened_tags
-        _ast.push.apply(_ast, _result.ast)
-      }
+  var raw = parseRawTags(html, raw_tags, {
+      remove_comments: options.remove_comments,
+    })
 
-      return _ast
-    }, [])
-
-  if( opened_tags && opened_tags.length ) {
+  if( raw.opened_tags && raw.opened_tags.length ) {
     throw new Error('opened_tags: ' + opened_tags.join(', ') )
   }
   
-  ast = ast
+  var ast = raw.ast
     .reduce(function (_ast, token) {
       if( typeof token !== 'string' ) {
-        _ast.push(token)
+        (
+          opened_tags && opened_tags.length
+            ? opened_tags[opened_tags.length - 1]._
+            : _ast
+        ).push(token)
       } else {
-        let _result = parseTags(html, { opened_tags })
+        let _result = parseTags(token, { opened_tags })
         opened_tags = _result.opened_tags
-        _ast.push.apply(_ast, _result.ast)
+        arrayPush.apply(_ast, _result.ast)
       }
 
       return _ast
     }, [])
+
+  if( options.ignore_unclosed ) opened_tags = null
   
-  if( opened_tags && opened_tags.length ) {
+  if(  opened_tags && opened_tags.length ) {
     throw new Error('opened_tags: ' + opened_tags.join(', ') )
   }
 
