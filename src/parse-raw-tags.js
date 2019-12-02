@@ -15,10 +15,11 @@ export function parseRawTags (html, raw_tags, options = {}) {
   if( typeof html !== 'string' ) throw new TypeError('html source should be a String')
   if( !raw_tags || !raw_tags.length ) throw new Error('raw_tags can not be empty')
 
-  const tag_prop = options.tag_prop || '$'
-  const content_prop = options.content_prop || '_'
+  // options
+  const { tag_prop = '$', content_prop = '_' } = options
   const use_text_contents = options.text_contents !== false
   const clear_empty_texts = !options.empty_texts
+
   const _quotes = extractQuotes(html)
 
   const RE_tags = new RegExp( '(' + '<!--|-->|' + raw_tags.map(function (tag_name) {
