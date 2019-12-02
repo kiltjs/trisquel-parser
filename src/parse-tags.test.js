@@ -1,7 +1,7 @@
 
 import assert from 'assert'
 
-import { parseTags } from './parse-html'
+import { parseTags } from './parse-tags'
 
 /** */
 describe( '.' + __filename.substr( process.cwd().length ), function () {
