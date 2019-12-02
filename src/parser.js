@@ -16,7 +16,7 @@ export function parseHTML (html, options = {}) {
   if( raw.opened_tags && raw.opened_tags.length ) {
     throw new Error('opened_tags: ' + opened_tags.join(', ') )
   }
-  
+
   var ast = raw.ast
     .reduce(function (_ast, token) {
       if( typeof token !== 'string' ) {
@@ -26,7 +26,12 @@ export function parseHTML (html, options = {}) {
             : _ast
         ).push(token)
       } else {
-        let _result = parseTags(token, { opened_tags })
+        let _result = parseTags(token, {
+          opened_tags,
+          filename: options.filename,
+          ignore_bad_closed: options.ignore_bad_closed,
+          ignore_unexpected_closed: options.ignore_unexpected_closed,
+        })
         opened_tags = _result.opened_tags
         arrayPush.apply(_ast, _result.ast)
       }

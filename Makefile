@@ -22,6 +22,17 @@ test: lint
 	npx mocha --require @babel/register src/*.test.js
 	# npx mocha tests/*-tests.js
 
+build:
+	rm -rf dist
+	npx babel src --out-dir dist --ignore src/**/*.test.js
+	# npx rollup src/con-text.js \
+	# 	-c rollup.config.js \
+	# 	--output.format umd \
+	# 	--output.file dist/con-text.umd.js \
+	# 	--output.exports named \
+	# 	-n conText
+	# npx uglifyjs dist/con-text.umd.js --compress --mangle -o dist/con-text.min.js
+
 npm.publish:
 	echo "building ${NPM_VERSION}"
 	git pull --tags

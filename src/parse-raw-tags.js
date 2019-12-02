@@ -26,7 +26,7 @@ export function parseRawTags (html, raw_tags, options = {}) {
       return '<' + tag_name + '[^>]*>|<\\/' + tag_name + '>'
     }).join('|') + ')', 'g')
 
-  var current_tag = options.opened_tags ? options.opened_tags[0] : null,
+  var current_tag = options.opened_tags ? options.opened_tags[options.opened_tags.length - 1] : null,
       ast = []
 
   function _processTag (_token) {
